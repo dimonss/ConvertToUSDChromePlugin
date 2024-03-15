@@ -1,0 +1,18 @@
+{
+  "name": "Convert price to USD",
+  "description": "Chrome plugin for convert price to USD. Use with kolesa.kz",
+  "version": "1.0",
+  "manifest_version": 3,
+  "icons": {
+    "128": "icon.png"
+  },
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+    "scripting",
+    "activeTab",
+    "tabs"
+  ],
+  "background": {}
+}
