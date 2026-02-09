@@ -5,14 +5,26 @@
         <link rel="stylesheet" type="text/css" href="popup.css"/>
     </head>
     <body>
-    <div class="inner">
-        <h1>Exchange to USD</h1>
-        <label>
-            Current exchange rate
-            <input value="455" min="1" max="1000000" step="1" type="number">
-        </label>
-        <button id="setBtn">Change</button>
-        <button id="resetBtn">Reset</button>
+    <div class="app">
+        <div class="card">
+            <header class="header">
+                <div class="badge">KZT → USD</div>
+                <h1>Convert Price</h1>
+                <p>Set the current exchange rate and convert all prices on the page.</p>
+            </header>
+
+            <label class="field">
+                <span>Current exchange rate</span>
+                <input id="rateInput" value="455" min="1" max="1000000" step="1" type="number">
+            </label>
+
+            <div class="actions">
+                <button id="setBtn" class="btn primary">Convert</button>
+                <button id="resetBtn" class="btn ghost">Reset</button>
+            </div>
+
+            <div class="footnote">Works on kolesa.kz listing pages.</div>
+        </div>
         <script src="popup.js"></script>
     </div>
     </body>
