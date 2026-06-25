@@ -6,12 +6,28 @@ const rateStatus = document.getElementById("rateStatus");
 // Fetch exchange rate on load
 fetchExchangeRate();
 
+// Check if URL is kolesa.kz or subdomain
+function isKolesaUrl(url) {
+    if (!url) return false;
+    try {
+        const parsed = new URL(url);
+        return parsed.hostname === 'kolesa.kz' || parsed.hostname.endsWith('.kolesa.kz');
+    } catch (e) {
+        return false;
+    }
+}
+
 // Check initial status on active tab
 async function init() {
     try {
         const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
         if (tab) {
-            await checkExchangeStatus(tab);
+            if (isKolesaUrl(tab.url)) {
+                await checkExchangeStatus(tab);
+            } else {
+                document.getElementById("converterContent").style.display = "none";
+                document.getElementById("warningContent").style.display = "block";
+            }
         } else {
             console.warn("No active tab found");
         }
