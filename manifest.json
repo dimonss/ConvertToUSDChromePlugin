@@ -12,10 +12,25 @@
   "permissions": [
     "scripting",
     "activeTab",
-    "tabs"
+    "tabs",
+    "storage"
   ],
   "host_permissions": [
-    "https://chalysh.pro/"
+    "https://chalysh.pro/*",
+    "https://kolesa.kz/*",
+    "https://*.kolesa.kz/*"
   ],
-  "background": {}
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://kolesa.kz/*",
+        "https://*.kolesa.kz/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
 }

@@ -2,6 +2,7 @@ const setBtn = document.getElementById("setBtn");
 const resetBtn = document.getElementById("resetBtn");
 const rateInput = document.getElementById("rateInput");
 const rateStatus = document.getElementById("rateStatus");
+const autoConvertToggle = document.getElementById("autoConvertToggle");
 
 // Fetch exchange rate on load
 fetchExchangeRate();
@@ -17,9 +18,23 @@ function isKolesaUrl(url) {
     }
 }
 
-// Check initial status on active tab
+// Check initial status on active tab & sync toggle state
 async function init() {
     try {
+        // Load initial toggle state
+        chrome.storage.local.get(['autoConvert'], (result) => {
+            if (autoConvertToggle) {
+                autoConvertToggle.checked = result.autoConvert !== false;
+            }
+        });
+
+        // Bind toggle change listener
+        if (autoConvertToggle) {
+            autoConvertToggle.addEventListener("change", () => {
+                chrome.storage.local.set({ autoConvert: autoConvertToggle.checked });
+            });
+        }
+
         const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
         if (tab) {
             if (isKolesaUrl(tab.url)) {
@@ -99,6 +114,8 @@ async function fetchExchangeRate() {
             const usdToKzt = result.data.find(item => item.currency === 'USD' && item.toCurrency === 'KZT');
             if (usdToKzt && usdToKzt.sell) {
                 rateInput.value = usdToKzt.sell;
+                // Sync the freshly fetched rate to local storage
+                await chrome.storage.local.set({ exchangeRate: usdToKzt.sell });
                 if (rateStatus) {
                     rateStatus.textContent = "Auto-updated";
                     rateStatus.style.color = "var(--accent-2)";
@@ -140,6 +157,8 @@ async function checkExchangeStatus(tab) {
 
 async function setUSD(tab) {
     const rate = parseFloat(rateInput.value) || 455;
+    // Save to local storage for subsequent automatic conversions
+    await chrome.storage.local.set({ exchangeRate: rate });
     await chrome.scripting.executeScript(
         {
             target: {tabId: tab.id, allFrames: false},
@@ -176,9 +195,11 @@ function setUsdScript(rate) {
     availableExchange.setAttribute('type', 'checkbox');
     availableExchange.setAttribute('id', 'invisibleCheckbox');
     availableExchange.setAttribute('style', 'display: none');
-    const parent = document.getElementsByTagName("body")[0];
-    parent.appendChild(input);
-    parent.appendChild(availableExchange);
+    const parent = document.body;
+    if (parent) {
+        parent.appendChild(input);
+        parent.appendChild(availableExchange);
+    }
 
     Array.prototype.slice.call(document.getElementsByClassName('a-card__price')).forEach(item => {
         input.value = input.value + item.innerText + ", ";
