@@ -1,0 +1,3 @@
+const CONFIG = {
+    API_AUTH_TOKEN: 'Basic YOUR_BASE64_TOKEN_HERE'
+};

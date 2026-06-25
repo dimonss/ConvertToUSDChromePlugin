@@ -14,5 +14,8 @@
     "activeTab",
     "tabs"
   ],
+  "host_permissions": [
+    "https://chalysh.pro/"
+  ],
   "background": {}
 }
